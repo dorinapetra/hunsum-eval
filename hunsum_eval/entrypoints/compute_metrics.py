@@ -6,7 +6,7 @@ from pathlib import Path
 import click
 import pandas as pd
 import yaml
-from typing import Dict, List
+from typing import List
 
 import utils.keywords as kw
 from metrics.metric_factory import MetricFactory
@@ -35,8 +35,10 @@ def main(generated_file, reference_file, output_file, config_file):
     for name in metric_names:
         metric = MetricFactory.get_metric(name)
         result: List = metric.evaluate_batch(generated, reference, aggregate=False)
-        # for key, res in result.items():
-        #    results[key].append(res)
+        for key, res in result.items():
+            results[key] = res
+
+
 
 
     a = 2
@@ -55,6 +57,7 @@ def load_dataset(data_dir, shuffle=False):
     if shuffle:
         df = df.sample(frac=1, random_state=123)
     return df
+
 
 if __name__ == '__main__':
     main()
