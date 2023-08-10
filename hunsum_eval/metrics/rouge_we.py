@@ -10,7 +10,7 @@ from embeddings.bert_embedding import BertEmbedding
 
 class RougeWE(RougeWeMetric):
     def __init__(self, embedding_model=''):
-        super().__init__()
+        super().__init__(n_workers=1)
         self.embedding: BaseEmbedding = BertEmbedding()
         self.THRESHOLD = 0.8
 
@@ -25,9 +25,18 @@ class RougeWE(RougeWeMetric):
         return score_dict
 
     def evaluate_batch(self, summaries: List[str], references: List[str] = [], **kwargs):
-        # res = super().evaluate_batch(summaries, references, **kwargs)
-        res = super().evaluate_example(summaries[0], references[0])
-        return []
+        results = {
+            'rouge_we_3_p': [],
+            'rouge_we_3_r': [],
+            'rouge_we_3_f': [],
+        }
+        del kwargs['aggregate']
+        for summary, reference in zip(summaries, references):
+            res = self.evaluate_example(summary, reference, **kwargs)
+            results['rouge_we_3_p'] += [res['rouge_we_3_p']]
+            results['rouge_we_3_r'] += [res['rouge_we_3_r']]
+            results['rouge_we_3_f'] += [res['rouge_we_3_f']]
+        return results
 
     def rouge_n_we(self, summary, reference, n, alpha=0.5, return_all=False, tokenize=False):
         """

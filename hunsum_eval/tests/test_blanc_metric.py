@@ -10,8 +10,8 @@ class BlancMetricTest(unittest.TestCase):
 
     def test_evaluate_example(self):
         summary = 'A kutya elment a boltba.'
-        reference = 'A kiskutya elsétált a piacra'
+        reference = 'A kiskutya elsétált a boltba'
 
-        score = self.metric.evaluate_example(summary, reference)
+        score = self.metric.evaluate_batch([summary], [reference])
 
-        self.assertAlmostEqual(score['blanc'], 0.3333, places=4)
+        self.assertAlmostEqual(score['blanc'][0], 0.66666, places=4)
