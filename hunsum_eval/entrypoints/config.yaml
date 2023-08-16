@@ -3,5 +3,7 @@ metrics:
   - rouge
   - rouge-we
   - blanc
+  - bert_score
+  - bleu
 
 rouge_args: -c 95 -2 -1 -U -r 1000 -n 4 -w 1.2 -a -m
