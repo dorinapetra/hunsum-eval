@@ -14,7 +14,7 @@ class Blanc(BlancMetric):
         super().__init__(device=device, inference_batch_size=inference_batch_size,
                          finetune_batch_size=finetune_batch_size, use_tune=use_tune)
 
-    def evaluate_batch(self, summaries: List[str], references: List[str] = [], **kwargs):
+    def evaluate_batch(self, summaries: List[str], references: List[str] = [], aggregate: bool = True):
         if self.use_tune:
             blanc_mod = BlancTune(device='cuda', inference_batch_size=self.inference_batch_size,
                                   finetune_batch_size=self.finetune_batch_size,
@@ -24,9 +24,16 @@ class Blanc(BlancMetric):
                                   model_name=self.model)
 
         blanc_mod.model = self.init_model()
-        results = blanc_mod.eval_pairs(summaries, references)
-        results = {"blanc": results}
+        scores = blanc_mod.eval_pairs(summaries, references)
+        if aggregate:
+            results = {"blanc": sum(scores) / len(scores)}
+        else:
+            results = {"blanc": scores}
         return results
+
+    def evaluate_example(self, summary: str, reference: str, **kwargs):
+        result = self.evaluate_batch([summary], [reference], **kwargs)
+        return result
 
     def init_model(self):
         """Initialize the language model and send it to the given device

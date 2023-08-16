@@ -15,27 +15,25 @@ class RougeWE(RougeWeMetric):
         self.THRESHOLD = 0.8
 
     def evaluate_example(self, summary, reference):
-        # if not isinstance(reference, list):
-        #     reference = [reference]
-        # if not isinstance(summary, list):
-        #     summary = [summary]
         score = self.rouge_n_we(summary, reference, self.n_gram, return_all=True, tokenize=self.tokenize)
         score_dict = {f"rouge_we_{self.n_gram}_p": score[0], f"rouge_we_{self.n_gram}_r": score[1],
                       f"rouge_we_{self.n_gram}_f": score[2]}
         return score_dict
 
-    def evaluate_batch(self, summaries: List[str], references: List[str] = [], **kwargs):
+    def evaluate_batch(self, summaries: List[str], references: List[str] = [], aggregate=False):
         results = {
             'rouge_we_3_p': [],
             'rouge_we_3_r': [],
             'rouge_we_3_f': [],
         }
-        del kwargs['aggregate']
         for summary, reference in zip(summaries, references):
-            res = self.evaluate_example(summary, reference, **kwargs)
+            res = self.evaluate_example(summary, reference)
             results['rouge_we_3_p'] += [res['rouge_we_3_p']]
             results['rouge_we_3_r'] += [res['rouge_we_3_r']]
             results['rouge_we_3_f'] += [res['rouge_we_3_f']]
+        if aggregate:
+            for key, value in results.items():
+                results[key] = sum(value) / len(value)
         return results
 
     def rouge_n_we(self, summary, reference, n, alpha=0.5, return_all=False, tokenize=False):
