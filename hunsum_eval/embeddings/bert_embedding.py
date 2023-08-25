@@ -23,11 +23,14 @@ class BertEmbedding(BaseEmbedding):
             self.nlp = huspacy.load('hu_core_news_lg',
                                     exclude=['tagger', 'parser', 'ner', 'lemmatizer', 'textcat', 'custom'])
 
-    def tokenize(self, text) -> List[str]:
+    def tokenize_words(self, text) -> List[str]:
         return [token.text for token in self.nlp(text)]
 
+    def bert_tokenize(self, text) -> List[str]:
+        return self.tokenizer(text, padding=True, truncation=True)
+
     def vectorize_text(self, text):
-        inputs = self.tokenizer([text], padding=True)
+        inputs = self.tokenizer([text], padding=True, truncation=True)
         output = self.model(input_ids=torch.tensor(inputs.input_ids),
                             attention_mask=torch.tensor(inputs.attention_mask))
         embedding = output.last_hidden_state[:, 0, :][0]

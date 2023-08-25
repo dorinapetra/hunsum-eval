@@ -42,8 +42,8 @@ class RougeWE(RougeWeMetric):
         a given value of `n`.
         """
 
-        summary_tokens = self.embedding.tokenize(summary)
-        reference_tokens = self.embedding.tokenize(reference)
+        summary_tokens = self.embedding.tokenize_words(summary)
+        reference_tokens = self.embedding.tokenize_words(reference)
 
         matches = 0
         recall_total = 0

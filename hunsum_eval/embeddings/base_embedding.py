@@ -8,7 +8,7 @@ from embeddings.ngram_embedding import NgramEmbedding
 
 class BaseEmbedding(ABC):
     @abstractmethod
-    def tokenize(self, text):
+    def tokenize_words(self, text):
         raise NotImplementedError()
 
     @abstractmethod

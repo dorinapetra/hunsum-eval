@@ -24,7 +24,12 @@ class BertEmbeddingTest(unittest.TestCase):
         self.assertEquals(ngram_embeddings[1].ngram, ('itt', 'egy', 'példa', 'mondat'))
 
     def test_tokenize(self):
-        tokens = self.embedding.tokenize('Ez itt egy mondat.')
+        tokens = self.embedding.tokenize_words('Ez itt egy mondat.')
+
+        self.assertEquals(tokens, ['Ez', 'itt', 'egy', 'mondat', '.'])
+
+    def test_bert_tokenize(self):
+        tokens = self.embedding.bert_tokenize(['Ez itt egy mondat.', 'Ez itt egy mondat.'])
 
         self.assertEquals(tokens, ['Ez', 'itt', 'egy', 'mondat', '.'])
 
