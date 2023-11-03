@@ -14,7 +14,7 @@ from pyemd import emd
 from summ_eval.metric import Metric
 from transformers import AutoModel, AutoTokenizer
 
-from embeddings.bert_embedding import BertEmbedding
+from embeddings.bert_vectorizer import BertVectorizer
 
 dirname = os.path.dirname(__file__)
 
@@ -26,7 +26,7 @@ class MoverScore(Metric):
         self.model = AutoModel.from_pretrained(model_type).to(self.device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_type, do_lower_case=True)
 
-        self.bert_embedding = BertEmbedding()
+        self.bert_vectorizer = BertVectorizer()
 
         stop_words = []
         if stop_wordsf is not None:
@@ -140,10 +140,10 @@ class MoverScore(Metric):
     def collate_idf(self, arr, idf_dict, pad="[PAD]"):
         # tokens = [["[CLS]"] + self.truncate(self.tokenizer.tokenize(a)) + ["[SEP]"] for a in arr]
 
-        result = self.bert_embedding.bert_tokenize(arr)
+        result = self.bert_vectorizer.bert_tokenize(arr)
         token_ids = result["input_ids"]
 
-        tokens = [self.bert_embedding.tokenizer.convert_ids_to_tokens(ids) for ids in token_ids]
+        tokens = [self.bert_vectorizer.tokenizer.convert_ids_to_tokens(ids) for ids in token_ids]
 
         idf_weights = [[idf_dict[i] for i in a] for a in token_ids]
 

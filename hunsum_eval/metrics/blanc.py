@@ -3,7 +3,6 @@ from typing import List
 import torch
 from blanc import BlancTune, BlancHelp
 from summ_eval.blanc_metric import BlancMetric
-from transformers import AutoModelForMaskedLM
 
 
 class Blanc(BlancMetric):
@@ -16,14 +15,13 @@ class Blanc(BlancMetric):
 
     def evaluate_batch(self, summaries: List[str], references: List[str] = [], aggregate: bool = True):
         if self.use_tune:
-            blanc_mod = BlancTune(device='cuda', inference_batch_size=self.inference_batch_size,
+            blanc_mod = BlancTune(device=self.device, inference_batch_size=self.inference_batch_size,
                                   finetune_batch_size=self.finetune_batch_size,
                                   model_name=self.model)
         else:
             blanc_mod = BlancHelp(device=self.device, inference_batch_size=self.inference_batch_size,
                                   model_name=self.model)
 
-        blanc_mod.model = self.init_model()
         scores = blanc_mod.eval_pairs(summaries, references)
         if aggregate:
             results = {"blanc": sum(scores) / len(scores)}
@@ -34,19 +32,3 @@ class Blanc(BlancMetric):
     def evaluate_example(self, summary: str, reference: str, **kwargs):
         result = self.evaluate_batch([summary], [reference], **kwargs)
         return result
-
-    def init_model(self):
-        """Initialize the language model and send it to the given device
-        Note: Transformers v.4 and higher made default return_dict=True.
-        Args:
-            device (str): torch device (usually "cpu" or "cuda")
-
-        Returns:
-            model: a model for masked language modeling torch model
-        """
-        try:
-            model = AutoModelForMaskedLM.from_pretrained(self.model, return_dict=False).to(self.device)
-        except:
-            model = AutoModelForMaskedLM.from_pretrained(self.model).to(self.device)
-        model.eval()
-        return model

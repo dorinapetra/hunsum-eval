@@ -4,14 +4,14 @@ from scipy import spatial
 from summ_eval.rouge_we_metric import RougeWeMetric
 from summ_eval.s3_utils import _ngram_count, _safe_f1
 
-from embeddings.base_embedding import BaseEmbedding
-from embeddings.bert_embedding import BertEmbedding
+from embeddings.base_vectorizer import BaseVectorizer
+from embeddings.bert_vectorizer import BertVectorizer
 
 
 class RougeWE(RougeWeMetric):
     def __init__(self, embedding_model=''):
         super().__init__(n_workers=1)
-        self.embedding: BaseEmbedding = BertEmbedding()
+        self.embedding: BaseVectorizer = BertVectorizer()
         self.THRESHOLD = 0.8
 
     def evaluate_example(self, summary, reference):

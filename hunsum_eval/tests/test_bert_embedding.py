@@ -1,12 +1,12 @@
 import unittest
 
-from embeddings.bert_embedding import BertEmbedding
+from embeddings.bert_vectorizer import BertVectorizer
 
 
 class BertEmbeddingTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.embedding = BertEmbedding()
+        cls.embedding = BertVectorizer()
 
     def test_vectorize_ngrams(self):
         tokens = ['Ez', 'itt', 'egy', 'példa', 'mondat']

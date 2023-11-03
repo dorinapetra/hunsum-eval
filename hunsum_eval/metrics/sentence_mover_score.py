@@ -7,14 +7,14 @@ import numpy as np
 from pyemd import emd
 from summ_eval.metric import Metric
 
-from embeddings.bert_embedding import BertEmbedding
+from embeddings.bert_vectorizer import BertVectorizer
 
 
 # https://github.com/hechmik/word_mover_distance
 
 class SentenceMoverScore(Metric):
     def __init__(self, model_type='SZTAKI-HLT/hubert-base-cc', metric='wms'):
-        self.embedding = BertEmbedding(model_type)
+        self.vectorizer = BertVectorizer(model_type)
         self.stop_words = set(stopwords.words('hungarian'))
         self.metric = metric
 
@@ -42,11 +42,14 @@ class SentenceMoverScore(Metric):
         for i, embedding1 in enumerate(sum_embeddings + ref_embeddings):
             for j, embedding2 in enumerate(sum_embeddings + ref_embeddings):
                 # If the current cell is empty compute cosine distance between word vectors.
-                if not distance_matrix[i, j]:
-                    distance_matrix[i, j] = 1 - np.dot(embedding1, embedding2) / (
-                            np.linalg.norm(embedding1) * np.linalg.norm(embedding2))
-                    # Fill the specular cell for saving computation
-                    distance_matrix[j, i] = distance_matrix[i, j]
+                try:
+                    if not distance_matrix[i, j]:
+                        distance_matrix[i, j] = 1 - np.dot(embedding1, embedding2) / (
+                                np.linalg.norm(embedding1) * np.linalg.norm(embedding2))
+                        # Fill the specular cell for saving computation
+                        distance_matrix[j, i] = distance_matrix[i, j]
+                except Exception as e:
+                    a = 1
 
         if np.sum(distance_matrix) == 0.0:
             # `emd` gets stuck if the distance matrix contains only zeros.
@@ -67,14 +70,14 @@ class SentenceMoverScore(Metric):
         mul = 2 if self.metric == 's+wms' else 1
 
         if self.metric != 'sms':
-            words.extend(self.embedding.tokenize_words(text))
-            embeddings.extend(self.embedding.vectorize_words(words))
+            words.extend(self.vectorizer.tokenize_words(text))
+            embeddings.extend(self.vectorizer.vectorize_words(words))
             nbow.extend([1 / (mul * len(words)) for _ in range(len(words))])
 
         if self.metric != 'wms':
-            sentences = self.embedding.tokenize_sentences(text)
+            sentences = self.vectorizer.tokenize_sentences(text)
             words.extend(sentences)
-            embeddings.extend([self.embedding.vectorize_text(sent) for sent in sentences])
+            embeddings.extend([self.vectorizer.vectorize_text(sent) for sent in sentences])
             nbow.extend([len(sent) / (mul * len(words)) for sent in sentences])
 
         return words, embeddings, nbow

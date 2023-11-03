@@ -8,6 +8,7 @@ from metrics.meteor import Meteor
 from metrics.mover_score import MoverScore
 from metrics.rouge import Rouge
 from metrics.rouge_we import RougeWE
+from metrics.sentence_mover_score import SentenceMoverScore
 
 
 class MetricFactory:
@@ -18,7 +19,9 @@ class MetricFactory:
         kw.BERT_SCORE: BertScore,
         kw.BLEU: Bleu,
         kw.METEOR: Meteor,
-        kw.MOVER_SCORE: MoverScore
+        kw.MOVER_SCORE: MoverScore,
+        kw.SENTENCE_MOVER_SCORE: SentenceMoverScore,
+
     }
 
     @classmethod
