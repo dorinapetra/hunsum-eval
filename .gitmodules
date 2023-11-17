@@ -1,0 +1,3 @@
+[submodule "pywnxml"]
+	path = pywnxml
+	url = https://github.com/ppke-nlpg/pywnxml

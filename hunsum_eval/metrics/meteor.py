@@ -8,6 +8,7 @@ from nltk.corpus.reader import XMLCorpusReader, WordNetCorpusReader
 from nltk.translate.meteor_score import meteor_score, _generate_enums, _count_chunks, _match_enums, _enum_stem_match
 from nltk.corpus import wordnet as wn
 from summ_eval.metric import Metric
+from pywnxml.WNQuery import WNQuery
 
 
 class Meteor(Metric):
@@ -17,7 +18,7 @@ class Meteor(Metric):
         nltk.download("omw-1.4")
         nltk.download("extended_omw")
         self.pos_tags = ['n', 'v', 'a', 'b']
-        # self.query = WNQuery('/home/dorka/projects/hunsum-eval/resources/huwn.xml')
+        self.query = WNQuery('/home/dorka/projects/hunsum-eval/resources/huwn.xml')
 
     def evaluate_batch(self, summaries: List[str], references: List[str] = [], aggregate=False):
         results = {'meteor': []}
@@ -63,9 +64,9 @@ class Meteor(Metric):
 
     def _enum_align_words(
             self,
-        enum_hypothesis_list: List[Tuple[int, str]],
-        enum_reference_list: List[Tuple[int, str]],
-        stemmer: StemmerI = PorterStemmer(),
+            enum_hypothesis_list: List[Tuple[int, str]],
+            enum_reference_list: List[Tuple[int, str]],
+            stemmer: StemmerI = PorterStemmer(),
     ) -> Tuple[List[Tuple[int, int]], List[Tuple[int, str]], List[Tuple[int, str]]]:
         """
         Aligns/matches words in the hypothesis to reference by sequentially
@@ -124,7 +125,7 @@ class Meteor(Metric):
                         for lemma in synset.lemmas()
                         if lemma.name().find("_") < 0
                     )
-                    #for synset in wordnet.synsets(enum_hypothesis_list[i][1], lang='hun_wikt')
+                    # for synset in wordnet.synsets(enum_hypothesis_list[i][1], lang='hun_wikt')
                     for synset in self.get_synsets(enum_hypothesis_list[i][1])
                 )
             ).union({enum_hypothesis_list[i][1]})
@@ -145,5 +146,3 @@ class Meteor(Metric):
             for synset in synsets:
                 literals = literals.union([s.literal for s in synset.synonyms])
         return literals
-
-
