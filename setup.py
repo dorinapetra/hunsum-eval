@@ -9,7 +9,7 @@ setup(
         # include=['mypackage*'],  # ['*'] by default
         # exclude=['mypackage.tests'],  # empty by default
     ),
-    package_dir={'': 'hunsum_eval/tests'},
+    # package_dir={'': 'hunsum_eval/tests'},
     url='',
     license='',
     author='Dorina Lakatos',
