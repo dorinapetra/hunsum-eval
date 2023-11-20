@@ -3,8 +3,7 @@ from setuptools import setup
 setup(
     name='hunsum-eval',
     version='1.0',
-    packages=['tests', 'errors', 'metrics', 'results', 'entrypoints'],
-    package_dir={'': 'hunsum_eval/tests'},
+    packages=['hunsum-eval'],
     url='',
     license='',
     author='Dorina Lakatos',
