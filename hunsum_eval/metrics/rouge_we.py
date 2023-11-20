@@ -1,7 +1,7 @@
 from typing import List
 
 from scipy import spatial
-from summ_eval.rouge_we_metric import RougeWeMetric
+from summ_eval.metric import Metric
 from summ_eval.s3_utils import _ngram_count, _safe_f1
 from tqdm import tqdm
 
@@ -9,11 +9,13 @@ from embeddings.base_vectorizer import BaseVectorizer
 from embeddings.bert_vectorizer import BertVectorizer
 
 
-class RougeWE(RougeWeMetric):
+class RougeWE(Metric):
     def __init__(self, embedding_model=''):
-        super().__init__(n_workers=1)
+        # super().__init__(n_workers=1)
         self.embedding: BaseVectorizer = BertVectorizer()
         self.THRESHOLD = 0.8
+        self.n_gram = 3
+        self.tokenize = True
 
     def evaluate_example(self, summary, reference):
         score = self.rouge_n_we(summary, reference, self.n_gram, return_all=True, tokenize=self.tokenize)
@@ -89,7 +91,3 @@ class RougeWE(RougeWeMetric):
             return ranked_list[0]
         else:
             return -1, sum_emb.ngram, sum_emb.count, 0
-
-
-if __name__ == '__main__':
-    r = RougeWeMetric()
