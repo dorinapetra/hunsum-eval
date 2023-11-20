@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='hunsum-eval',
-    version='',
+    version='1.0',
     packages=['tests', 'errors', 'metrics', 'results', 'entrypoints'],
     package_dir={'': 'hunsum_eval/tests'},
     url='',
@@ -11,6 +11,6 @@ setup(
     author_email='',
     description='',
     install_requires=[
-            'summ-eval'
-        ]
+        'summ-eval'
+    ]
 )
