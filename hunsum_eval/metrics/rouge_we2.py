@@ -65,6 +65,9 @@ class RougeWE2(Metric):
         for summary_embedding in summary_embeddings:
             idx, closest, count, sim = self._find_closest(summary_embedding, reference_embeddings)
 
+            if idx < 0:
+                continue
+
             if count <= summary_embedding.count:
                 del reference_embeddings[idx]
                 result += count * sim
