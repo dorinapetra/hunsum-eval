@@ -4,7 +4,6 @@ from scipy import spatial
 from summ_eval.metric import Metric
 from summ_eval.s3_utils import _ngram_count, _safe_f1
 from tqdm import tqdm
-from summ_eval.rouge_we_metric import RougeWeMetric
 from embeddings.base_vectorizer import BaseVectorizer
 from embeddings.bert_vectorizer import BertVectorizer
 
