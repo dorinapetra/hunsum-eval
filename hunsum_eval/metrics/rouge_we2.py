@@ -9,7 +9,7 @@ from embeddings.base_vectorizer import BaseVectorizer
 from embeddings.bert_vectorizer import BertVectorizer
 
 
-class RougeWE(Metric):
+class RougeWE2(Metric):
     def __init__(self, embedding_model=''):
         # super().__init__(n_workers=1)
         self.embedding: BaseVectorizer = BertVectorizer()
@@ -65,14 +65,13 @@ class RougeWE(Metric):
 
         for summary_embedding in summary_embeddings:
             idx, closest, count, sim = self._find_closest(summary_embedding, reference_embeddings)
-            if sim < self.THRESHOLD:
-                continue
+
             if count <= summary_embedding.count:
                 del reference_embeddings[idx]
-                result += count
+                result += count * sim
             else:
                 reference_embeddings[idx].count -= summary_embedding.count
-                result += summary_embedding.count
+                result += summary_embedding.count * sim
 
         return result
 

@@ -8,6 +8,7 @@ from metrics.meteor import Meteor
 from metrics.mover_score import MoverScore
 from metrics.rouge import Rouge
 from metrics.rouge_we import RougeWE
+from metrics.rouge_we2 import RougeWE2
 from metrics.sentence_mover_score import SentenceMoverScore
 
 
@@ -21,7 +22,9 @@ class MetricFactory:
         kw.METEOR: Meteor,
         kw.MOVER_SCORE: MoverScore,
         kw.SENTENCE_MOVER_SCORE: SentenceMoverScore,
-
+        "rouge-we-fixed": RougeWE,
+        "rouge-we-new": RougeWE2,
+        "blanc-mbert": lambda: Blanc(model="bert-base-multilingual-cased")
     }
 
     @classmethod

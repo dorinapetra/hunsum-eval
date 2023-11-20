@@ -3,10 +3,13 @@ metrics:
   # - rouge-we
   # - meteor
   # - bleu
-  - blanc
-  - bert-score
+  # - blanc
+  # - bert-score
   # - mover-score
   # - sentence-mover-score
+  - blanc-mbert
+  - rouge-we-fixed
+  - rouge-we-new
 
 
 rouge_args: -c 95 -2 -1 -U -r 1000 -n 4 -w 1.2 -a -m
