@@ -75,7 +75,7 @@ def main(generated_dir, reference_file, output_file, config_file, human_eval=Fal
         #         result = metric.evaluate_example(g, r)
         #     for key, res in result.items():
         #         results[key].append(res)
-        for g, r, a in tqdm(batch(generated, reference, articles)):
+        for g, r, a in tqdm(batch(generated, reference, articles, 100)):
             if 'blanc' in name:
                 result = metric.evaluate_batch(g, a, aggregate=False)
             else:
