@@ -29,7 +29,7 @@ class BertVectorizer(BaseVectorizer):
         """
         Vectorize a list of words by averaging the subword embeddings.
         """
-        tokens = self.tokenizer([' '.join(words)], padding=True, truncation=True)
+        tokens = self.tokenizer([words], padding=True, truncation=True, is_split_into_words=True)
         output = self.model(input_ids=torch.tensor(tokens.input_ids),
                             attention_mask=torch.tensor(tokens.attention_mask))
         return list(self._get_avg_subword_embeddings(output.last_hidden_state[0], tokens[0].word_ids))

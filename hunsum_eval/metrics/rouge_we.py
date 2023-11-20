@@ -3,6 +3,7 @@ from typing import List
 from scipy import spatial
 from summ_eval.rouge_we_metric import RougeWeMetric
 from summ_eval.s3_utils import _ngram_count, _safe_f1
+from tqdm import tqdm
 
 from embeddings.base_vectorizer import BaseVectorizer
 from embeddings.bert_vectorizer import BertVectorizer
@@ -26,7 +27,7 @@ class RougeWE(RougeWeMetric):
             'rouge_we_3_r': [],
             'rouge_we_3_f': [],
         }
-        for summary, reference in zip(summaries, references):
+        for summary, reference in tqdm(zip(summaries, references)):
             res = self.evaluate_example(summary, reference)
             results['rouge_we_3_p'] += [res['rouge_we_3_p']]
             results['rouge_we_3_r'] += [res['rouge_we_3_r']]

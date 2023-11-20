@@ -1,5 +1,6 @@
 from itertools import chain
 
+import huspacy
 import nltk
 from nltk import PorterStemmer, StemmerI
 from summ_eval.meteor_metric import MeteorMetric
@@ -11,25 +12,30 @@ from summ_eval.metric import Metric
 from pywnxml.WNQuery import WNQuery
 
 
+# based on nltk.translate.meteor_score
+
 class Meteor(Metric):
     def __init__(self):
         super().__init__()
-        nltk.download("wordnet")
-        nltk.download("omw-1.4")
-        nltk.download("extended_omw")
+        # nltk.download("wordnet")
+        # nltk.download("omw-1.4")
+        # nltk.download("extended_omw")
+        self.nlp = huspacy.load('hu_core_news_lg')
         self.pos_tags = ['n', 'v', 'a', 'b']
-        self.query = WNQuery('/home/dorka/projects/hunsum-eval/resources/huwn.xml')
+        self.query = WNQuery('/home/dorka/projects/hunsum-eval/resources/huwn.xml', log=open('log.txt', 'w'))
 
     def evaluate_batch(self, summaries: List[str], references: List[str] = [], aggregate=False):
         results = {'meteor': []}
         for summary, reference in zip(summaries, references):
-            results['meteor'].append(self.evaluate_example(summary, reference))
+            results['meteor'].append(self.evaluate_example(summary, reference)['meteor'])
         if aggregate:
             return {key: sum(results[key]) / len(results[key]) for key in results.keys()}
         return results
 
     def evaluate_example(self, summary, reference):
-        return self.single_meteor_score(summary, reference)
+        summary_tokenized = [token.lemma_ for token in self.nlp(summary)]
+        reference_tokenized = [token.lemma_ for token in self.nlp(reference)]
+        return {'meteor': self.single_meteor_score(summary_tokenized, reference_tokenized)}
 
     def single_meteor_score(
             self,
@@ -120,13 +126,13 @@ class Meteor(Metric):
         for i in range(len(enum_hypothesis_list))[::-1]:
             hypothesis_syns = set(
                 chain.from_iterable(
-                    (
-                        lemma.name()
-                        for lemma in synset.lemmas()
-                        if lemma.name().find("_") < 0
-                    )
+                    # (
+                    #     lemma.name()
+                    #     for lemma in synset.lemmas()
+                    #     if lemma.name().find("_") < 0
+                    # )
                     # for synset in wordnet.synsets(enum_hypothesis_list[i][1], lang='hun_wikt')
-                    for synset in self.get_synsets(enum_hypothesis_list[i][1])
+                    [synset for synset in self.get_synsets(enum_hypothesis_list[i][1])]
                 )
             ).union({enum_hypothesis_list[i][1]})
             for j in range(len(enum_reference_list))[::-1]:
@@ -141,6 +147,7 @@ class Meteor(Metric):
 
     def get_synsets(self, literal: str):
         literals = set()
+        literal_lemma = None  # TODO lemma from huspacy
         for pos in self.pos_tags:
             synsets = self.query.lookUpLiteral(literal, pos=pos)
             for synset in synsets:

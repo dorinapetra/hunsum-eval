@@ -6,7 +6,7 @@ from summ_eval.blanc_metric import BlancMetric
 
 
 class Blanc(BlancMetric):
-    def __init__(self, model: str = 'SZTAKI-HLT/hubert-base-cc', inference_batch_size: int = 128,
+    def __init__(self, model: str = 'SZTAKI-HLT/hubert-base-cc', inference_batch_size: int = 10,
                  finetune_batch_size: int = 24, use_tune: bool = False):
         device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
         self.model = model

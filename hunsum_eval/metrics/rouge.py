@@ -10,6 +10,9 @@ class Rouge(RougeMetric):
     def __init__(self, rouge_args=None):
         super().__init__(rouge_args=rouge_args)
 
+    def evaluate_example(self, summary, reference):
+        return super().evaluate_example(summary, reference)['rouge']
+
     def evaluate_batch(self, summaries: List[str], references: List[str] = [], **kwargs):
         result = super().evaluate_batch(summaries, references, **kwargs)
         if kwargs['aggregate']:

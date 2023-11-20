@@ -14,12 +14,16 @@ from utils.ngrams import get_ngrams
 class BaseVectorizer(ABC):
     def __init__(self):
         try:
-            self.nlp = huspacy.load('hu_core_news_trf',
-                                    exclude=['tagger', 'parser', 'ner', 'lemmatizer', 'textcat'])
-        except OSError:
-            huspacy.download('hu_core_news_trf')
             self.nlp = huspacy.load('hu_core_news_lg',
-                                    exclude=['tagger', 'parser', 'ner', 'lemmatizer', 'textcat'])
+                                    disable=['tagger', 'morphologizer', 'lookup_lemmatizer', 'trainable_lemmatizer',
+                                             'ner', 'parser', 'expeerimental_arc_predicter',
+                                             'expeerimental_arc_labeler'])
+        except OSError:
+            huspacy.download('hu_core_news_lg')
+            self.nlp = huspacy.load('hu_core_news_lg',
+                                    disable=['tagger', 'morphologizer', 'lookup_lemmatizer', 'trainable_lemmatizer',
+                                             'ner', 'parser', 'expeerimental_arc_predicter',
+                                             'expeerimental_arc_labeler'])
 
     def tokenize_words(self, text) -> List[str]:
         return [token.text for token in self.nlp(text)]
