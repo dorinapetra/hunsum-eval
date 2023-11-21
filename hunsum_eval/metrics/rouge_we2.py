@@ -9,11 +9,11 @@ from embeddings.bert_vectorizer import BertVectorizer
 
 
 class RougeWE2(Metric):
-    def __init__(self, embedding_model=''):
+    def __init__(self, embedding_model='', n_gram=3):
         # super().__init__(n_workers=1)
         self.embedding: BaseVectorizer = BertVectorizer()
         self.THRESHOLD = 0.8
-        self.n_gram = 3
+        self.n_gram = n_gram
         self.tokenize = True
 
     def evaluate_example(self, summary, reference):
