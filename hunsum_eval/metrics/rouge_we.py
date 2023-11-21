@@ -24,15 +24,15 @@ class RougeWE(Metric):
 
     def evaluate_batch(self, summaries: List[str], references: List[str] = [], aggregate=False):
         results = {
-            'rouge_we_3_p': [],
-            'rouge_we_3_r': [],
-            'rouge_we_3_f': [],
+            f'rouge_we_{self.n_gram}_p': [],
+            f'rouge_we_{self.n_gram}_r': [],
+            f'rouge_we_{self.n_gram}_f': [],
         }
         for summary, reference in tqdm(zip(summaries, references)):
             res = self.evaluate_example(summary, reference)
-            results['rouge_we_3_p'] += [res['rouge_we_3_p']]
-            results['rouge_we_3_r'] += [res['rouge_we_3_r']]
-            results['rouge_we_3_f'] += [res['rouge_we_3_f']]
+            results[f'rouge_we_{self.n_gram}_p'] += [res[f'rouge_we_{self.n_gram}_p']]
+            results[f'rouge_we_{self.n_gram}_r'] += [res[f'rouge_we_{self.n_gram}_r']]
+            results[f'rouge_we_{self.n_gram}_f'] += [res[f'rouge_we_{self.n_gram}_f']]
         if aggregate:
             for key, value in results.items():
                 results[key] = sum(value) / len(value)
