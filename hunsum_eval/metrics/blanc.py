@@ -10,6 +10,7 @@ class Blanc(BlancMetric):
                  finetune_batch_size: int = 24, use_tune: bool = False):
         device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
         self.model = model
+        self.model_name = "hubert" if "hubert" in model else "mbert"
         super().__init__(device=device, inference_batch_size=inference_batch_size,
                          finetune_batch_size=finetune_batch_size, use_tune=use_tune)
 
@@ -24,9 +25,9 @@ class Blanc(BlancMetric):
 
         scores = blanc_mod.eval_pairs(summaries, references)
         if aggregate:
-            results = {"blanc": sum(scores) / len(scores)}
+            results = {f"blanc_{self.model}": sum(scores) / len(scores)}
         else:
-            results = {"blanc": scores}
+            results = {f"blanc_{self.model}": scores}
         return results
 
     def evaluate_example(self, summary: str, reference: str, **kwargs):
