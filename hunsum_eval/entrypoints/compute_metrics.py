@@ -50,4 +50,4 @@ if __name__ == '__main__':
     original_file = RESOUCRES_DIR / "test_set_for_eval.tsv"
 
     config_file = 'config.yaml'
-    main(original_file, config_file, human_eval=False)
+    main(original_file, config_file)
