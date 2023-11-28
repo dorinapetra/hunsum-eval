@@ -69,15 +69,17 @@ class SentenceMoverScore(Metric):
         nbow = []
         mul = 2 if self.metric == 's+wms' else 1
 
+        A = len(self.vectorizer.vectorize_text(text))
+
+        # create_embeddings, compute nbow
         if self.metric != 'sms':
             words.extend(self.vectorizer.tokenize_words(text))
             embeddings.extend(self.vectorizer.vectorize_words(words))
-            nbow.extend([1 / (mul * len(words)) for _ in range(len(words))])
-
+            nbow.extend([1 / (mul * A) for _ in range(len(words))])
         if self.metric != 'wms':
             sentences = self.vectorizer.tokenize_sentences(text)
             words.extend(sentences)
             embeddings.extend([self.vectorizer.vectorize_text(sent) for sent in sentences])
-            nbow.extend([len(sent) / (mul * len(words)) for sent in sentences])
+            nbow.extend([len(self.vectorizer.tokenize_words(sent)) / (mul * A) for sent in sentences])
 
         return words, embeddings, nbow

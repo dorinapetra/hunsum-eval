@@ -17,7 +17,7 @@ class Rouge(RougeMetric):
         result = super().evaluate_batch(summaries, references, **kwargs)
         if kwargs['aggregate']:
             return result['rouge']
-        return {key: [i['rouge'][key] for i in result] for key in result[0]['rouge'].keys() if key in kw.ROUGE_NAMES}
+        return {key: [i[key] for i in result] for key in result[0].keys() if key in kw.ROUGE_NAMES}
 
 
 if __name__ == '__main__':
