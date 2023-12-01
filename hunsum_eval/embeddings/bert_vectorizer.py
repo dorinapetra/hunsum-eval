@@ -12,6 +12,7 @@ class BertVectorizer(BaseVectorizer):
         super().__init__()
         self.model = AutoModel.from_pretrained(model_name)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.max_length = 128 if "sentence" in model_name else 512
 
     def bert_tokenize(self, text) -> List[str]:
         return self.tokenizer(text, padding=True, truncation=True)
@@ -19,7 +20,7 @@ class BertVectorizer(BaseVectorizer):
     def vectorize_text(self, text):
         if type(text) != list:
             text = [text]
-        inputs = self.tokenizer(text, padding=True, truncation=True)
+        inputs = self.tokenizer(text, padding=True, truncation=True, max_length=self.max_length)
         output = self.model(input_ids=torch.tensor(inputs.input_ids),
                             attention_mask=torch.tensor(inputs.attention_mask))
         embedding = output.last_hidden_state[:, 0, :][0]
@@ -29,7 +30,8 @@ class BertVectorizer(BaseVectorizer):
         """
         Vectorize a list of words by averaging the subword embeddings.
         """
-        tokens = self.tokenizer([words], padding=True, truncation=True, is_split_into_words=True)
+        tokens = self.tokenizer([words], padding=True, truncation=True, is_split_into_words=True,
+                                max_length=self.max_length)
         output = self.model(input_ids=torch.tensor(tokens.input_ids),
                             attention_mask=torch.tensor(tokens.attention_mask))
         return list(self._get_avg_subword_embeddings(output.last_hidden_state[0], tokens[0].word_ids))
