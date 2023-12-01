@@ -26,7 +26,7 @@ class BaseVectorizer(ABC):
                                              'expeerimental_arc_labeler'])
 
     def tokenize_words(self, text) -> List[str]:
-        return [token.text for token in self.nlp(text)]
+        return [token.text.strip() for token in self.nlp(text) if not str(token.text).isspace()]
 
     def tokenize_sentences(self, text) -> List[str]:
         return [str(sent) for sent in self.nlp(text).sents]
