@@ -12,7 +12,7 @@ class RougeWE(Metric):
     def __init__(self, embedding_model='', n_gram=3):
         # super().__init__(n_workers=1)
         self.embedding: BaseVectorizer = BertVectorizer()
-        self.THRESHOLD = 0.8
+        self.THRESHOLD = 0.85
         self.n_gram = n_gram
         self.tokenize = True
 
@@ -50,8 +50,8 @@ class RougeWE(Metric):
         matches = 0
         recall_total = 0
 
-        summary_embeddings = self.embedding.vectorize_ngrams(summary_tokens)
-        reference_embeddings = self.embedding.vectorize_ngrams(reference_tokens)
+        summary_embeddings = self.embedding.vectorize_ngrams(summary_tokens, n)
+        reference_embeddings = self.embedding.vectorize_ngrams(reference_tokens, n)
 
         matches += self._soft_overlap(summary_embeddings, reference_embeddings)
         recall_total += _ngram_count(reference_tokens, n)
